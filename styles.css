@@ -585,7 +585,17 @@ dialog[open] { animation: pop 0.35s var(--ease); }
 .sum-item.done .chk { background: var(--green); border-color: var(--green); }
 .sum-item .sum-note { display: block; color: var(--gray); font-size: 13px; margin-top: 2px; white-space: pre-wrap; }
 .sum-item .sum-note:empty::before { content: "sem anotação"; font-style: italic; opacity: 0.6; }
-.summary-actions { display: flex; gap: 10px; margin-top: 18px; }
+.summary-sender {
+  display: grid; gap: 6px; max-width: 420px; margin-bottom: 16px;
+  font-size: 12px; font-weight: 700; color: var(--gray);
+}
+.summary-sender input {
+  font-family: inherit; font-size: 15px; font-weight: 400; padding: 10px 12px;
+  border-radius: 12px; border: 1px solid var(--line); color: var(--navy);
+}
+.summary-sender input:focus { outline: 2px solid rgba(0, 153, 224, 0.35); border-color: var(--blue); }
+.summary-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.summary-share-hint { margin-top: 14px; font-size: 13px; max-width: 52rem; }
 
 /* ---------- notas ---------- */
 .notes { display: none; }

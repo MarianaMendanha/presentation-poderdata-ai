@@ -559,11 +559,19 @@
     <span class="eyebrow">Fechamento</span>
     <h2>Resumo das perguntas e anotações</h2>
     <p class="lead">Tudo o que foi anotado nos cartões aparece aqui. As anotações ficam salvas neste navegador.</p>
+    <label class="summary-sender">
+      <span>Seu nome</span>
+      <input id="participantName" type="text" maxlength="120" placeholder="Para identificar quem enviou as respostas" autocomplete="name" />
+    </label>
     <div class="summary" id="summary"></div>
     <div class="summary-actions">
-      <button class="btn" id="copyNotes">Copiar anotações</button>
-      <button class="btn ghost" id="clearNotes">Limpar</button>
+      <button type="button" class="btn" id="copyNotes">Copiar anotações</button>
+      <button type="button" class="btn" id="shareNotes">Compartilhar</button>
+      <button type="button" class="btn ghost" id="emailNotes">E-mail para Mariana</button>
+      <button type="button" class="btn ghost" id="telegramNotes">Telegram</button>
+      <button type="button" class="btn ghost" id="clearNotes">Limpar</button>
     </div>
+    <p class="hint summary-share-hint">E-mail abre <b>mariana.mendanha@poder360.com.br</b> com o texto pronto. Telegram abre o chat com <b>@MariMendanha</b> e as respostas já no campo de mensagem — é só tocar em enviar.</p>
   </div>
   <aside class="notes">
     <p>Repassar as respostas em voz alta para confirmar o entendimento e combinar quem decide o que ficou em aberto.</p>

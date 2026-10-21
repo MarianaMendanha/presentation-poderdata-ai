@@ -446,10 +446,27 @@
 
   /* ---------------- perguntas + anotações ---------------- */
   const STORE = "pd-apresentacao-ia-v1";
+  const SHARE = {
+    email: "mariana.mendanha@poder360.com.br",
+    telegramUser: "MariMendanha",
+  };
+  const MAILTO_BODY_MAX = 1800;
+  /** Limite conservador do parâmetro ?text= em t.me (URL total do navegador). */
+  const TELEGRAM_TEXT_ENCODED_MAX = 3500;
+
   let state = {};
   try { state = JSON.parse(localStorage.getItem(STORE) || "{}"); } catch { state = {}; }
   const save = () => { localStorage.setItem(STORE, JSON.stringify(state)); renderSummary(); };
   const entry = (id) => (state[id] ||= { note: "", picks: [], done: false });
+
+  const participantInput = $("#participantName");
+  if (participantInput) {
+    participantInput.value = state.participantName || "";
+    participantInput.addEventListener("input", (event) => {
+      state.participantName = event.target.value.slice(0, 120);
+      save();
+    });
+  }
 
   $$("[data-qgroup]").forEach((grid) => {
     const n = grid.dataset.qgroup;
@@ -484,6 +501,71 @@
       return `${n}. ${QUESTION_GROUP_LABEL[n]}\n${lines.join("\n")}`;
     }).join("\n\n");
   }
+
+  function fullExportText() {
+    const name = (state.participantName || "").trim();
+    const who = name ? `Nome: ${name}\n\n` : "";
+    return `Alinhamento IA PoderData\n${who}${summaryText()}`;
+  }
+
+  async function copyExportText(button, label = "Copiar anotações") {
+    const text = fullExportText();
+    try {
+      await navigator.clipboard.writeText(text);
+      if (button) button.textContent = "Copiado!";
+    } catch {
+      window.prompt("Copie o texto:", text);
+    }
+    if (button) setTimeout(() => { button.textContent = label; }, 1600);
+  }
+
+  async function shareExport(button) {
+    const text = fullExportText();
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "Alinhamento IA PoderData", text });
+        return;
+      } catch (err) {
+        if (err?.name === "AbortError") return;
+      }
+    }
+    openTelegramDraft(text, button, "Compartilhar");
+  }
+
+  async function openTelegramDraft(text, button, resetLabel) {
+    const encoded = encodeURIComponent(text);
+    const chat = `https://t.me/${SHARE.telegramUser}`;
+    if (encoded.length <= TELEGRAM_TEXT_ENCODED_MAX) {
+      window.location.assign(`${chat}?text=${encoded}`);
+    } else {
+      try { await navigator.clipboard.writeText(text); } catch { /* segue abrindo o chat */ }
+      window.location.assign(chat);
+      window.setTimeout(() => {
+        window.alert("As respostas foram copiadas — cole na mensagem para @MariMendanha e envie.");
+      }, 400);
+    }
+    if (button) {
+      button.textContent = "Abrindo…";
+      setTimeout(() => { button.textContent = resetLabel; }, 1600);
+    }
+  }
+
+  function emailExport() {
+    const text = fullExportText();
+    let body = text;
+    let extra = "";
+    if (text.length > MAILTO_BODY_MAX) {
+      body = `${text.slice(0, MAILTO_BODY_MAX)}\n\n[Texto truncado no e-mail — use Copiar anotações para o conteúdo completo.]`;
+      extra = " (texto longo: parte foi truncada; use Copiar se precisar do completo)";
+    }
+    const href = `mailto:${SHARE.email}?subject=${encodeURIComponent("Alinhamento IA PoderData")}&body=${encodeURIComponent(body)}`;
+    window.location.href = href;
+    if (extra) window.setTimeout(() => { window.alert(extra); }, 300);
+  }
+
+  function telegramExport() {
+    openTelegramDraft(fullExportText(), $("#telegramNotes"), "Telegram");
+  }
   function renderSummary() {
     const box = $("#summary");
     box.innerHTML = "";
@@ -500,12 +582,10 @@
     });
   }
   renderSummary();
-  $("#copyNotes").addEventListener("click", async (event) => {
-    const text = `Alinhamento IA PoderData\n\n${summaryText()}`;
-    try { await navigator.clipboard.writeText(text); event.target.textContent = "Copiado!"; }
-    catch { window.prompt("Copie o texto:", text); }
-    setTimeout(() => { event.target.textContent = "Copiar anotações"; }, 1600);
-  });
+  $("#copyNotes").addEventListener("click", (event) => copyExportText(event.currentTarget));
+  $("#shareNotes").addEventListener("click", (event) => shareExport(event.currentTarget));
+  $("#emailNotes").addEventListener("click", () => emailExport());
+  $("#telegramNotes").addEventListener("click", () => telegramExport());
   $("#clearNotes").addEventListener("click", () => {
     if (!window.confirm("Apagar todas as anotações?")) return;
     localStorage.removeItem(STORE);

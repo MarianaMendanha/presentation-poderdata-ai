@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IA do PoderData · como pensei, como está, para onde vai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>.slide{min-height:auto!important}.reveal{opacity:1!important;transform:none!important}</style></head>
+<body>
+
+<div class="progress"><span id="progressBar"></span></div>
+
+<header class="topbar">
+  <a href="#capa" class="brand"><img src="img/poder-data-logo.png" alt="PoderData" /></a>
+  <nav class="topnav" id="topnav"></nav>
+  <button class="notes-toggle" id="notesToggle" title="Mostrar roteiro de fala (tecla N)">Roteiro <kbd>N</kbd></button>
+</header>
+
+<nav class="dots" id="dots" aria-label="Seções"></nav>
+
+<main id="deck">
+
+<!-- ============ CAPA ============ -->
+<section id="capa" class="slide hero" data-title="Capa">
+  <div class="hero-sunburst" aria-hidden="true"></div>
+  <div class="wrap">
+    <img class="hero-logo" src="img/poder-data-logo-branca.png" alt="PoderData" />
+    <span class="eyebrow light">Conversa de alinhamento · IA da plataforma PoderData RR</span>
+    <h1>Como pensei a IA do PoderData,<br /><span>como ela está hoje e para onde vai</span></h1>
+    <p class="lead light">Base de conhecimento, os três RAGs, o roteiro telefônico, guardrails e cinco perguntas que eu preciso que você me ajude a responder.</p>
+    <div class="hero-meta">
+      <span>Mariana Mendanha · Engenharia</span>
+      <span>out.2026</span>
+    </div>
+    <div class="hero-hint">Use <kbd>←</kbd> <kbd>→</kbd> para navegar · clique nos nós dos fluxos · <kbd>N</kbd> abre o roteiro</div>
+  </div>
+  <aside class="notes">
+    <p>Abrir agradecendo o tempo. Combinar o formato: eu explico e, nos cartões laranja, paro e pergunto.</p>
+    <p>"A ideia não é só mostrar o que fiz, é sair daqui com decisões em cinco pontos onde eu ainda tenho dúvida."</p>
+  </aside>
+</section>
+
+<!-- ============ AGENDA ============ -->
+<section id="agenda" class="slide" data-title="Agenda">
+  <div class="wrap">
+    <span class="eyebrow">Roteiro da conversa</span>
+    <h2>Cinco temas, cada um termina com uma pergunta</h2>
+    <div class="agenda-grid">
+      <a class="agenda-card" href="#documentos"><b>1</b><h3>Base de conhecimento</h3><p>O que li nos documentos, como organizei a Base da IA, os fluxos dos RAGs e do roteiro, busca e ingestão.</p><span class="tag">o maior bloco</span></a>
+      <a class="agenda-card" href="#contexto"><b>2</b><h3>Contexto do cliente logado</h3><p>A IA deve lembrar dos projetos anteriores da conta ou só da conversa atual?</p></a>
+      <a class="agenda-card" href="#guardrails"><b>3</b><h3>Guardrails e moderação</h3><p>O que já protege a IA hoje e o que pode estar faltando.</p></a>
+      <a class="agenda-card" href="#categorias"><b>4</b><h3>Categorias e papéis</h3><p>Tipos de pesquisa fixos ou dinâmicos, e quem pode mexer em quê.</p></a>
+      <a class="agenda-card" href="#rag3"><b>5</b><h3>RAG 3</h3><p>Entender como você imaginou o analista de trackings e onde entra o Perplexity.</p></a>
+    </div>
+    <div class="legend-q"><span class="qdot"></span> Cartões com borda laranja são perguntas para você. Dá para marcar como respondida e anotar; tudo vai para o resumo no final.</div>
+  </div>
+  <aside class="notes">
+    <p>"Vou começar pelo tema 1 porque ele explica todo o resto: depois que você entender como a Base da IA funciona, as outras perguntas ficam mais concretas."</p>
+  </aside>
+</section>
+
+<!-- ============ 1. DOCUMENTOS ============ -->
+<section id="documentos" class="slide alt" data-title="1 · Ponto de partida">
+  <div class="wrap">
+    <span class="eyebrow">Tema 1 · Base de conhecimento</span>
+    <h2>Ponto de partida: os documentos que o Tobias passou</h2>
+    <p class="lead">Li o escopo principal e os três documentos de RAG citados nele. Passe o mouse para ver o que cada um define.</p>
+    <div class="docs-grid">
+      <article class="doc-card" tabindex="0">
+        <div class="doc-icon">DOC</div>
+        <h3>Escopo PoderData RR</h3>
+        <p class="doc-sub">Plano de release, deadline 1.dez.2026</p>
+        <ul class="doc-more">
+          <li>A plataforma é a casca; os RAGs são o cérebro</li>
+          <li>10 a 15 perguntas na v1, teto de 20</li>
+          <li>"empresa de pesquisas", nunca "instituto"</li>
+          <li>IA nunca calcula no tracking</li>
+        </ul>
+      </article>
+      <article class="doc-card" tabindex="0">
+        <div class="doc-icon r1">R1</div>
+        <h3>RAG 1 · Gerador</h3>
+        <p class="doc-sub">Tema ou rascunho vira a v1 do questionário</p>
+        <ul class="doc-more">
+          <li>Classificador, retrieval, geração, validação</li>
+          <li>Chunks A a G: abertura, demográficas, templates, lógica, fechamento, eleitoral</li>
+          <li>Sugestões de temas correlatos ("sacadas")</li>
+        </ul>
+      </article>
+      <article class="doc-card" tabindex="0">
+        <div class="doc-icon r2">R2</div>
+        <h3>RAG 2 · Aprimoramento</h3>
+        <p class="doc-sub">Chat que lapida o questionário com estado</p>
+        <ul class="doc-more">
+          <li>Modos: pontual, estrutural, recriação, consulta</li>
+          <li>Versões, travas, "desfaz", 10 últimas versões</li>
+          <li>Regra 17: nada muda fora do escopo pedido</li>
+        </ul>
+      </article>
+      <article class="doc-card" tabindex="0">
+        <div class="doc-icon r3">R3</div>
+        <h3>RAG 3 · Analista de trackings</h3>
+        <p class="doc-sub">Brief diário sobre séries numéricas</p>
+        <ul class="doc-more">
+          <li>Motor estatístico em código, janelas 3/7/30/90 dias</li>
+          <li>Agregador de 30 anos + Perplexity condicional</li>
+          <li>Number grounding e disciplina causal</li>
+        </ul>
+      </article>
+    </div>
+
+    <h3 class="sub">O que eu adaptei para o uso real (e por quê)</h3>
+    <div class="adapt-list" id="adaptList"></div>
+  </div>
+  <aside class="notes">
+    <p>"Os documentos são muito bons como especificação de comportamento. O que eu fiz foi traduzir para algo que dá para operar no dia a dia."</p>
+    <p>Abrir 2 ou 3 linhas da lista de adaptações, principalmente: catálogo tipado em vez de base vetorial, e o roteiro separado do questionário.</p>
+  </aside>
+</section>
+
+<!-- ============ VISÃO GERAL ============ -->
+<section id="visao" class="slide" data-title="1 · Visão geral">
+  <div class="wrap">
+    <span class="eyebrow">Tema 1 · Base de conhecimento</span>
+    <h2>O ciclo completo em uma tela</h2>
+    <p class="lead">O cliente cria com o RAG 1, lapida com o RAG 2, o roteiro vira ligação, o campo gera dados e o RAG 3 analisa. A Base da IA alimenta os três primeiros.</p>
+    <div class="cycle">
+      <a class="cycle-step" href="#rag1" style="--i:0"><span class="cs-num">RAG 1</span><h4>Redator</h4><p>Gera a v1 a partir do tema</p></a>
+      <span class="cycle-arrow">→</span>
+      <a class="cycle-step" href="#rag2" style="--i:1"><span class="cs-num">RAG 2</span><h4>Editor</h4><p>Ajusta por chat, com versões</p></a>
+      <span class="cycle-arrow">→</span>
+      <a class="cycle-step" href="#roteiro" style="--i:2"><span class="cs-num">Roteiro</span><h4>Ligação URA</h4><p>Versão final vira fala</p></a>
+      <span class="cycle-arrow">→</span>
+      <div class="cycle-step muted" style="--i:3"><span class="cs-num">Campo</span><h4>Pesquisa IVR</h4><p>Fora da IA</p></div>
+      <span class="cycle-arrow">→</span>
+      <a class="cycle-step dashed" href="#rag3" style="--i:4"><span class="cs-num">RAG 3</span><h4>Analista</h4><p>Brief do tracking</p></a>
+    </div>
+    <div class="cycle-base">
+      <div class="cb-line"><span></span><span></span><span></span></div>
+      <a class="cb-box" href="#base">
+        <b>Base da IA</b>
+        <span>regras · padrões de pergunta · pesquisas de referência · exemplos de melhoria · fraseado de ligação</span>
+      </a>
+    </div>
+    <div class="legend">
+      <span><i class="lg code"></i> Código (determinístico)</span>
+      <span><i class="lg small"></i> Modelo pequeno (classificar, extrair)</span>
+      <span><i class="lg strong"></i> Modelo forte (escrever)</span>
+      <span><i class="lg end"></i> Saída ou parada</span>
+    </div>
+    <p class="hint">Princípio que vale para tudo: <b>modelo forte só onde se escreve</b>. Classificar, buscar e validar é código ou modelo pequeno. Fica mais barato, mais rápido e dá para testar.</p>
+  </div>
+  <aside class="notes">
+    <p>"Se for para guardar uma imagem, é essa." Passar o mouse em cada etapa.</p>
+    <p>Reforçar que o RAG 3 está tracejado porque é o que ainda está menos definido, e vamos falar dele no fim.</p>
+  </aside>
+</section>
+
+<!-- ============ BASE DA IA ============ -->
+<section id="base" class="slide alt" data-title="1 · Base da IA">
+  <div class="wrap">
+    <span class="eyebrow">Tema 1 · Base de conhecimento</span>
+    <h2>Sim, existe base além do prompt: a Base da IA</h2>
+    <p class="lead">O superadmin não "joga documentos para a IA ler". Ele ensina conteúdos de <b>5 tipos</b>, cada um com formato próprio, revisado e publicado. Passe o mouse para ver um exemplo de cada.</p>
+
+    <div class="kinds" id="kinds"></div>
+
+    <div class="tax">
+      <div class="tax-col">
+        <h4>6 tipos de pesquisa <small>filtram o que vale para cada pedido</small></h4>
+        <div class="chips" id="chipsTypes"></div>
+      </div>
+      <div class="tax-col">
+        <h4>12 intenções de pergunta <small>o classificador escolhe, o código busca</small></h4>
+        <div class="chips" id="chipsIntents"></div>
+      </div>
+      <div class="tax-col">
+        <h4>6 momentos da ligação <small>usados pelo roteiro</small></h4>
+        <div class="chips" id="chipsSlots"></div>
+      </div>
+    </div>
+    <p class="hint">Vocabulário fechado de propósito: a IA escolhe entre opções conhecidas, e quem consulta a base é o código. Isso evita que o modelo "invente" uma categoria.</p>
+  </div>
+  <aside class="notes">
+    <p>"Respondendo direto à pergunta 1 do documento: tem base além do prompt, sim. São cinco tipos." Passar por cada cartão.</p>
+    <p>Destacar: tudo funciona mesmo com a Base vazia, porque há regras e padrões padrão versionados no código. O que for publicado sobrepõe.</p>
+  </aside>
+</section>
+
+<!-- ============ TELAS ============ -->
+<section id="telas" class="slide" data-title="1 · Telas">
+  <div class="wrap">
+    <span class="eyebrow">Tema 1 · Como fica no produto</span>
+    <h2>Como o superadmin ensina a IA</h2>
+    <p class="lead">Telas reais do painel admin (ambiente local). Clique para ampliar.</p>
+    <div class="shots">
+      <figure class="shot big" data-full="img/base-ia.png">
+        <img src="img/base-ia.png" alt="Aba Base da IA no painel admin" />
+        <figcaption><b>Aba Base da IA.</b> Lista de conteúdos com tipo, pesquisas, status, e o painel "O que a IA segue hoje" com as regras efetivas por tipo de pesquisa e de onde vieram.</figcaption>
+      </figure>
+      <figure class="shot" data-full="img/dialog-ensinar.png">
+        <img src="img/dialog-ensinar.png" alt="Diálogo O que você quer ensinar à IA" />
+        <figcaption><b>Passo 1.</b> "O que você quer ensinar à IA?": escolha do tipo, com onde ele é usado.</figcaption>
+      </figure>
+      <figure class="shot" data-full="img/dialog-upload.png">
+        <img src="img/dialog-upload.png" alt="Passo de upload" />
+        <figcaption><b>Passo 2.</b> Para quais pesquisas vale e o arquivo. A IA extrai só o que está escrito.</figcaption>
+      </figure>
+      <figure class="shot" data-full="img/dialog-editor.png">
+        <img src="img/dialog-editor.png" alt="Editor de rascunho" />
+        <figcaption><b>Passo 3.</b> Rascunho editável com campos do tipo. Salvar ou Publicar.</figcaption>
+      </figure>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Mostrar que "O que a IA segue hoje" é a resposta para "por que a IA fez isso?": mostra a regra efetiva e a fonte.</p>
+    <p>No exemplo publicado, "Máximo de perguntas geral" vale só para Políticas públicas: é assim que se ajusta o limite por tipo.</p>
+  </aside>
+</section>
+
+<!-- ============ INGESTÃO ============ -->
+<section id="ingestao" class="slide alt" data-title="1 · Ingestão">
+  <div class="wrap">
+    <span class="eyebrow">Tema 1 · Como entra conteúdo novo</span>
+    <h2>Ingestão: do arquivo ao conteúdo publicado</h2>
+    <p class="lead">Nada entra direto. Todo conteúdo vira rascunho, passa por revisão e só vale depois de publicado. Clique em <b>Simular</b> ou em qualquer etapa.</p>
+    <div class="flow-shell" data-flow="ingest"></div>
+  </div>
+  <aside class="notes">
+    <p>"A parte que eu mais quis proteger é a fidelidade: a IA ajuda a organizar o arquivo, mas não pode inventar regra. Se o texto extraído não bate com o original, vira aviso."</p>
+    <p>Publicar troca os registros do documento numa transação só: não existe momento em que metade da regra nova está valendo.</p>
+  </aside>
+</section>
+
+<!-- ============ BUSCA ============ -->
+<section id="busca" class="slide" data-title="1 · Busca">
+  <div class="wrap">
+    <span class="eyebrow">Tema 1 · Como a IA encontra o conteúdo</span>
+    <h2>Busca hoje (BM25) e amanhã (pgvector)</h2>
+    <p class="lead">Hoje a busca é por palavras, depois de filtrar por tipo de conteúdo e tipo de pesquisa. Teste abaixo com uma base de exemplo.</p>
+
+    <div class="search-demo">
+      <div class="sd-controls">
+        <label>Tema do pedido <input id="sdQuery" value="avaliação do governo federal" /></label>
+        <label>Tipo de pesquisa
+          <select id="sdType"></select>
+        </label>
+        <label class="sd-toggle"><input type="checkbox" id="sdVector" /> <span>Simular busca por significado (pgvector)</span></label>
+      </div>
+      <div class="sd-pipeline">
+        <div class="sd-stage"><b>1</b> Filtra pelo tipo de conteúdo permitido para o fluxo</div>
+        <div class="sd-stage"><b>2</b> Filtra pelo tipo de pesquisa (ou "vale para todas")</div>
+        <div class="sd-stage"><b>3</b> <span id="sdRankLabel">Ranqueia por palavras em comum (BM25)</span></div>
+        <div class="sd-stage"><b>4</b> Devolve os melhores e registra as fontes</div>
+      </div>
+      <ol class="sd-results" id="sdResults"></ol>
+      <p class="sd-tip" id="sdTip"></p>
+    </div>
+
+    <div class="compare">
+      <div class="cmp-col">
+        <h4>Hoje · BM25 em memória</h4>
+        <ul>
+          <li>Catálogo pequeno e estruturado: regras são números, não texto</li>
+          <li>Sem custo de embeddings, sem infraestrutura nova</li>
+          <li>Previsível e auditável: dá para explicar por que achou</li>
+          <li class="neg">Não entende sinônimos: "pedágio" não acha "mobilidade urbana"</li>
+        </ul>
+      </div>
+      <div class="cmp-col future">
+        <h4>Depois · pgvector (busca híbrida)</h4>
+        <ul>
+          <li>Busca por significado, somada à busca por palavras</li>
+          <li>Faz sentido quando houver centenas de pesquisas de referência ou o acervo do Agregador</li>
+          <li><b>Os fluxos não mudam:</b> troca só o motor por trás da ferramenta de busca</li>
+          <li class="neg">Custo de embeddings e reindexação a cada publicação</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Digitar "pedágio urbano" no demo para mostrar a limitação, depois ligar o pgvector.</p>
+    <p>"Eu não comecei com base vetorial de propósito: com pouco conteúdo, ela adiciona custo e imprevisibilidade sem ganho. A troca foi desenhada para não mexer nos fluxos."</p>
+  </aside>
+</section>
+
+<!-- ============ RAG 1 ============ -->
+<section id="rag1" class="slide alt" data-title="1 · RAG 1 Redator">
+  <div class="wrap">
+    <span class="eyebrow">Tema 1 · Fluxos</span>
+    <h2>RAG 1 · Redator: do tema à primeira versão</h2>
+    <p class="lead">Recebe um tema ou rascunho e devolve a v1 com até 3 sugestões de temas correlatos. Clique em <b>Simular</b> e escolha o cenário.</p>
+    <div class="flow-shell" data-flow="rag1"></div>
+  </div>
+  <aside class="notes">
+    <p>Rodar o cenário "pedido normal" e depois "fora do escopo".</p>
+    <p>Ponto-chave: o validador é código. Se a v1 vier com 17 perguntas, a lista de erros volta para o modelo corrigir, no máximo 2 vezes.</p>
+  </aside>
+</section>
+
+<!-- ============ RAG 2 ============ -->
+<section id="rag2" class="slide" data-title="1 · RAG 2 Editor">
+  <div class="wrap">
+    <span class="eyebrow">Tema 1 · Fluxos</span>
+    <h2>RAG 2 · Editor: lapidar por conversa, sem estragar</h2>
+    <p class="lead">O modelo não reescreve o documento: ele devolve <b>operações</b> (alterar, incluir, remover, mover). Quem aplica é o código, respeitando travas e o escopo do pedido.</p>
+    <div class="flow-shell" data-flow="rag2"></div>
+
+    <div class="rag2-extra">
+      <div class="chat-mock">
+        <div class="cm-head">Exemplo de turno</div>
+        <div class="cm-msg user">A pergunta 8 está confusa, simplifica.</div>
+        <div class="cm-msg ai">
+          <div class="diff"><span class="d-old">ANTES: De maneira geral, como você avalia a PEC do trabalho flexível considerando os impactos na sua rotina laboral e na economia?</span><span class="d-new">DEPOIS: De maneira geral, como você avalia a PEC do trabalho flexível?</span></div>
+          <p>Por quê: removi a pergunta dupla e o termo "laboral".</p>
+          <p class="cm-foot">Versão atual: v5 · 13 perguntas</p>
+        </div>
+      </div>
+
+      <div class="sessions">
+        <div class="cm-head">Sessões do editor <small>interativo</small></div>
+        <div class="versions" id="versions"></div>
+        <div class="sess-actions">
+          <button class="btn sm" data-sess="edit">Pedir edição</button>
+          <button class="btn sm ghost" data-sess="undo">Desfazer</button>
+          <button class="btn sm ghost" data-sess="lock">Travar Q3</button>
+        </div>
+        <p class="sess-log" id="sessLog">Cada edição aceita vira uma nova versão. Guardamos as 10 últimas.</p>
+        <div class="lanes">
+          <div class="lane"><b>Visitante</b><span>sessão expira depois de um tempo sem uso (ajustável)</span></div>
+          <div class="lane-arrow">faz login →</div>
+          <div class="lane ok"><b>Usuário logado</b><span>a mesma conversa passa a ser dele e não expira</span></div>
+        </div>
+        <p class="hint small">Cada conversa é isolada pelo seu identificador: o editor nunca vê outra conversa, nem do mesmo cliente.</p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>"Essa é a regra 17 do documento do RAG 2, a mais importante: nada muda fora do que foi pedido. Eu garanto isso no código, não confiando no modelo."</p>
+    <p>Mostrar sessões: clicar em "Pedir edição" várias vezes até passar de 10 versões; "Travar Q3" e explicar que a trava sobrevive até à recriação total.</p>
+    <p>Gancho para o tema 2: "repara que o editor só conhece a conversa atual".</p>
+  </aside>
+</section>
+
+<!-- ============ ROTEIRO ============ -->
+<section id="roteiro" class="slide alt" data-title="1 · Roteiro telefônico">
+  <div class="wrap">
+    <span class="eyebrow">Tema 1 · Fluxos</span>
+    <h2>Roteiro telefônico: da versão final à fala da URA</h2>
+    <p class="lead">Módulo separado, chamado só com a versão final. As falas fixas vêm da Base; o modelo só adapta cada pergunta para ser <b>ouvida</b>.</p>
+    <div class="flow-shell" data-flow="phone"></div>
+    <div class="script-preview">
+      <div class="cm-head">Prévia do roteiro gerado</div>
+      <ol class="script" id="scriptPreview"></ol>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>"Separei a fala da ligação do questionário. O cliente vê e edita perguntas; abertura, LGPD, tecla zero e despedida são padrão da casa e vêm da Base."</p>
+    <p>Se o modelo falhar, o roteiro sai inteiro com o texto original: nunca fica sem roteiro.</p>
+    <p>Pergunta a fazer aqui: em que momento esse roteiro é gerado no produto.</p>
+  </aside>
+</section>
+
+<!-- ============ PERGUNTAS TEMA 1 ============ -->
+<section id="q1" class="slide" data-title="1 · Perguntas">
+  <div class="wrap">
+    <span class="eyebrow">Tema 1 · Para você</span>
+    <h2>O que eu preciso validar sobre a base</h2>
+    <div class="qgrid" data-qgroup="1"></div>
+  </div>
+  <aside class="notes">
+    <p>Deixar ele responder sem pressa. Anotar nos cartões.</p>
+  </aside>
+</section>
+
+<!-- ============ 2. CONTEXTO ============ -->
+<section id="contexto" class="slide alt" data-title="2 · Contexto logado">
+  <div class="wrap">
+    <span class="eyebrow">Tema 2 · Personalização</span>
+    <h2>A IA deve lembrar da conta ou só da conversa?</h2>
+    <p class="lead">Hoje a IA usa duas camadas de contexto. A terceira, a da conta, é uma decisão de produto.</p>
+    <div class="layers">
+      <div class="layer on" tabindex="0">
+        <span class="layer-tag">existe</span>
+        <h4>Base da IA</h4>
+        <p>Igual para todos os clientes. Metodologia, padrões, exemplos e falas da casa.</p>
+      </div>
+      <div class="layer on" tabindex="0">
+        <span class="layer-tag">existe</span>
+        <h4>Sessão (RAG 2)</h4>
+        <p>Versões, travas e turnos da conversa atual. Isolada por conversa.</p>
+      </div>
+      <div class="layer off" tabindex="0">
+        <span class="layer-tag">decisão</span>
+        <h4>Conta do cliente</h4>
+        <p>Projetos anteriores da mesma empresa, público habitual, termos preferidos.</p>
+      </div>
+    </div>
+    <div class="options3">
+      <div class="opt" tabindex="0">
+        <span class="opt-l">A</span><h4>Só sessão e Base <small>(como está)</small></h4>
+        <p class="pro">Simples, sem risco de vazar dado entre clientes</p>
+        <p class="con">Cada pesquisa nova começa do zero</p>
+      </div>
+      <div class="opt" tabindex="0">
+        <span class="opt-l">B</span><h4>Projetos anteriores da conta</h4>
+        <p class="pro">A v1 já sai no estilo e no público do cliente</p>
+        <p class="con">Precisa de isolamento forte por conta e cuidado com NDA</p>
+      </div>
+      <div class="opt" tabindex="0">
+        <span class="opt-l">C</span><h4>Perfil configurável da conta</h4>
+        <p class="pro">O cliente ou a equipe define preferências explícitas</p>
+        <p class="con">Mais uma tela para manter; pode ficar desatualizado</p>
+      </div>
+    </div>
+    <div class="qgrid" data-qgroup="2"></div>
+  </div>
+  <aside class="notes">
+    <p>"Tecnicamente a opção B é viável: seria mais uma ferramenta de busca, filtrada pela conta. A minha dúvida é de produto e de confidencialidade."</p>
+  </aside>
+</section>
+
+<!-- ============ 3. GUARDRAILS ============ -->
+<section id="guardrails" class="slide" data-title="3 · Guardrails">
+  <div class="wrap">
+    <span class="eyebrow">Tema 3 · Segurança e moderação</span>
+    <h2>Guardrails que já existem</h2>
+    <p class="lead">A regra geral: <b>o que dá para checar com código, é código</b>. Passe o mouse para ver os detalhes. Os marcados com <span class="badge adj">ajustável</span> mudam pela Base da IA.</p>
+    <div class="guard-groups" id="guardGroups"></div>
+    <h3 class="sub">Candidatos que ainda não existem</h3>
+    <div class="missing" id="missingList"></div>
+    <div class="qgrid" data-qgroup="3"></div>
+  </div>
+  <aside class="notes">
+    <p>Passar rápido pelos grupos. O ponto de atenção é a lista de candidatos, principalmente limite de uso: hoje um visitante sem login consegue gerar questionários, e cada geração tem custo de modelo.</p>
+  </aside>
+</section>
+
+<!-- ============ 4. CATEGORIAS ============ -->
+<section id="categorias" class="slide alt" data-title="4 · Categorias e papéis">
+  <div class="wrap">
+    <span class="eyebrow">Tema 4 · Organização</span>
+    <h2>Categorias de pesquisa e quem pode mexer em quê</h2>
+    <div class="cat-row">
+      <div class="cat-now">
+        <h4>Hoje: 6 tipos fixos no código</h4>
+        <div class="chips big" id="chipsTypes2"></div>
+        <p>O classificador escolhe um deles, e cada conteúdo da Base diz para quais tipos vale.</p>
+      </div>
+      <div class="cat-opts">
+        <div class="opt" tabindex="0"><span class="opt-l">A</span><h4>Manter fixos</h4><p class="pro">Estável, testável, sem surpresa</p><p class="con">Nova categoria exige deploy</p></div>
+        <div class="opt" tabindex="0"><span class="opt-l">B</span><h4>Ajustar a lista</h4><p class="pro">Ex.: separar "saúde" ou "consumo"</p><p class="con">Continua exigindo deploy</p></div>
+        <div class="opt" tabindex="0"><span class="opt-l">C</span><h4>Dinâmicos (superadmin cria)</h4><p class="pro">Flexível para novos mercados</p><p class="con">Precisa de dono, senão vira bagunça</p></div>
+      </div>
+    </div>
+
+    <h3 class="sub">Proposta de papéis</h3>
+    <div class="roles">
+      <div class="role super" tabindex="0">
+        <span class="role-tag">proposto</span>
+        <h4>Superadmin</h4>
+        <p class="role-who">Uma ou poucas pessoas que dominam metodologia</p>
+        <ul><li>Base da IA: ensina, revisa, publica</li><li>Regras e limites por tipo de pesquisa</li><li>Categorias (se forem dinâmicas)</li></ul>
+      </div>
+      <div class="role admin" tabindex="0">
+        <span class="role-tag">proposto</span>
+        <h4>Admin PoderData</h4>
+        <p class="role-who">Equipe que atende os clientes</p>
+        <ul><li>Acompanha o andamento das pesquisas</li><li>Edita perguntas manualmente</li><li>Conversa com o cliente</li><li class="neg">Não altera a Base nem as regras</li></ul>
+      </div>
+      <div class="role client" tabindex="0">
+        <span class="role-tag">já existe</span>
+        <h4>Admin da conta (cliente)</h4>
+        <p class="role-who">Gestor do lado do cliente</p>
+        <ul><li>Gerencia o próprio time</li><li>Vê os projetos da empresa</li></ul>
+      </div>
+    </div>
+    <p class="warn">Atenção ao nome: no sistema já existe "Admin da conta", que é do lado do cliente. Se criarmos o admin da equipe PoderData, convém outro nome (ex.: "Analista PoderData") para não confundir.</p>
+    <div class="qgrid" data-qgroup="4"></div>
+  </div>
+  <aside class="notes">
+    <p>"Minha preocupação com a Base da IA é ela virar um depósito em que todo mundo coloca coisa. Por isso proponho que só o superadmin publique."</p>
+  </aside>
+</section>
+
+<!-- ============ 5. RAG 3 ============ -->
+<section id="rag3" class="slide" data-title="5 · RAG 3">
+  <div class="wrap">
+    <span class="eyebrow">Tema 5 · Analista de trackings</span>
+    <h2>RAG 3: o que o documento descreve e o que existe hoje</h2>
+    <p class="lead">O documento é detalhado na redação do brief, mas várias peças de dados ainda não existem. Antes de construir, quero entender como você imaginou.</p>
+
+    <div class="tabs" data-tabs="rag3">
+      <button class="tab active" data-tab="vision">Como o documento descreve</button>
+      <button class="tab" data-tab="now">O que já está no código</button>
+    </div>
+    <div class="tab-panel active" data-panel="vision">
+      <div class="flow-shell" data-flow="rag3vision"></div>
+      <div class="r3-facts">
+        <div><b>3 · 7 · 30 · 90</b><span>janelas de dias analisadas sempre</span></div>
+        <div><b>"oscilação"</b><span>obrigatório quando dentro da margem de erro</span></div>
+        <div><b>3 consultas</b><span>no máximo ao Perplexity, só com movimento significativo</span></div>
+        <div><b>7 seções</b><span>título, essencial, janelas, estratos, espelho histórico, contexto, ficha</span></div>
+      </div>
+    </div>
+    <div class="tab-panel" data-panel="now">
+      <div class="flow-shell" data-flow="rag3now"></div>
+      <p class="hint">Hoje o grafo recebe um <b>payload estatístico pronto</b> e redige com verificação de números. Quem calcula esse payload (o motor estatístico) ainda não existe, e o Perplexity está previsto mas não ligado.</p>
+    </div>
+    <div class="qgrid" data-qgroup="5"></div>
+  </div>
+  <aside class="notes">
+    <p>"Aqui é onde eu mais preciso de você. O documento é ótimo sobre como escrever o brief, mas eu não sei de onde vêm os dados nem quem vai ler."</p>
+    <p>Sobre o Perplexity: "a análise fria funciona sem ele. A dúvida é se o contexto de notícias vale o custo e o risco de fonte, ou se dá para usar o próprio acervo do Poder360."</p>
+  </aside>
+</section>
+
+<!-- ============ ROADMAP ============ -->
+<section id="roadmap" class="slide alt" data-title="Próximos passos">
+  <div class="wrap">
+    <span class="eyebrow">Para onde vai</span>
+    <h2>Como imagino a evolução</h2>
+    <div class="timeline" id="timeline"></div>
+  </div>
+  <aside class="notes">
+    <p>"Essa ordem pode mudar dependendo das respostas de hoje, principalmente RAG 3 e contexto da conta."</p>
+  </aside>
+</section>
+
+<!-- ============ RESUMO ============ -->
+<section id="resumo" class="slide" data-title="Resumo">
+  <div class="wrap">
+    <span class="eyebrow">Fechamento</span>
+    <h2>Resumo das perguntas e anotações</h2>
+    <p class="lead">Tudo o que foi anotado nos cartões aparece aqui. As anotações ficam salvas neste navegador.</p>
+    <div class="summary" id="summary"></div>
+    <div class="summary-actions">
+      <button class="btn" id="copyNotes">Copiar anotações</button>
+      <button class="btn ghost" id="clearNotes">Limpar</button>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Repassar as respostas em voz alta para confirmar o entendimento e combinar quem decide o que ficou em aberto.</p>
+  </aside>
+</section>
+
+</main>
+
+<div class="notes-drawer" id="notesDrawer" aria-live="polite">
+  <div class="nd-head"><b id="ndTitle">Roteiro</b><button id="ndClose" aria-label="Fechar">×</button></div>
+  <div class="nd-body" id="ndBody"></div>
+</div>
+
+<dialog id="nodeDialog" class="node-dialog">
+  <form method="dialog"><button class="nd-x" aria-label="Fechar">×</button></form>
+  <div id="nodeDialogBody"></div>
+</dialog>
+
+<dialog id="imgDialog" class="img-dialog">
+  <form method="dialog"><button class="nd-x" aria-label="Fechar">×</button></form>
+  <img id="imgDialogImg" alt="" />
+</dialog>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
